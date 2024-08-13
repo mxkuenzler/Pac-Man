@@ -121,3 +121,43 @@ public class NavigationScript : MonoBehaviour
         return new Vector3(vec.x, vec.y);
     }*/
 }
+
+/*
+ * Ideally to be used for Ghost navigation
+ * Terrible traversal
+ */
+
+public class NavigationGrid
+{
+    ArrayList navList;
+    public NavigationGrid()
+    {
+        navList = new ArrayList();
+    }
+
+    public void Add(NavigationGridNode newNode)
+    {
+        navList.Add(newNode);
+        foreach (NavigationGridNode node in navList)
+        {
+            if (node.position.x == newNode.position.x + 1) { newNode.right = node; }
+            if (node.position.x == newNode.position.x - 1) { newNode.left = node; }
+            if (node.position.y == newNode.position.y + 1) { newNode.up = node; }
+            if (node.position.y == newNode.position.y - 1) { newNode.down = node; }
+        }
+    }
+}
+
+public class NavigationGridNode
+{
+    public Vector2Int position;
+    public NavigationGridNode right;
+    public NavigationGridNode left;
+    public NavigationGridNode up;
+    public NavigationGridNode down;
+
+    public NavigationGridNode(Vector2Int pos)
+    {
+        position = pos;
+    }
+}

@@ -22,13 +22,14 @@ public class MapManagerScript : MonoBehaviour
     [SerializeField]
     private GameObject camera;
 
+    public HashSet<Vector2Int> map;
+
     private void Start()
     {
         generateMap();
     }
 
 
-    public HashSet<Vector2Int> map;
     public void paintFloorTiles(IEnumerable<Vector2Int> floorPositions)
     {
         paintTiles(floorPositions, floorMap, baseTile);

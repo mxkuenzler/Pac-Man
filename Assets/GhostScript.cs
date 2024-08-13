@@ -17,6 +17,7 @@ public class GhostScript : MonoBehaviour
     private int queuedDirection;
     private int direction;
     private Vector3 previousPos;
+    private NavigationGrid navGrid;
 
     private float turnTimer = 0;
 
@@ -50,7 +51,10 @@ public class GhostScript : MonoBehaviour
         else
         {
             Debug.Log("flip");
-            direction += ((direction - 2 < 0) ? 2 : -2);
+            direction += 2;
+            if (direction > 3) {
+                direction -= 4;
+            }
         }
 
         if (direction == queuedDirection + 2 || direction == queuedDirection - 2)
@@ -73,6 +77,10 @@ public class GhostScript : MonoBehaviour
     void newMap()
     {
         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<MapManagerScript>();
+        foreach ( Vector2Int pos in manager.map)
+        {
+            navGrid.Add(new NavigationGridNode(pos));
+        }
     }
 
     bool movingOut()
