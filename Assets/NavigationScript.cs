@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NavigationScript : MonoBehaviour
@@ -40,7 +42,7 @@ public class NavigationScript : MonoBehaviour
         }
     }
 
-    public void tryMovingTurn(ref int direction, int queuedDirection, Vector3 pos, Vector3 prevPos)
+    public void tryMovingTurn(ref int direction, int queuedDirection, Vector3 pos, Vector3 prevPos, GameObject character)
     {
         if (directions[direction].x != 0)
         {
@@ -55,7 +57,7 @@ public class NavigationScript : MonoBehaviour
 
                 if (isValidPath(newVec))
                 {
-                    transform.position = new Vector3((Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev), pos.y);
+                    character.transform.position = new Vector3((Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev), pos.y);
                     direction = queuedDirection;
                 }
             }
@@ -73,7 +75,7 @@ public class NavigationScript : MonoBehaviour
 
                 if (isValidPath(newVec))
                 {
-                    transform.position = new Vector3(pos.x, (Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev));
+                    character.transform.position = new Vector3(pos.x, (Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev));
                     direction = queuedDirection;
                 }
             }
@@ -94,6 +96,29 @@ public class NavigationScript : MonoBehaviour
         }
         return false;
     }
+
+    public int getDirectionIndex(Vector2Int vec)
+    {
+        if(vec == Directions.right())
+        {
+            return 0;
+        }
+        if (vec == Directions.up())
+        {
+            return 1;
+        }
+        if (vec == Directions.left())
+        {
+            return 2;
+        }
+        if (vec == Directions.down())
+        {
+            return 3;
+        }
+        return 0;
+
+    }
+
     /*
     bool movingOut(int direction)
     {
@@ -140,10 +165,45 @@ public class NavigationGrid
         navList.Add(newNode);
         foreach (NavigationGridNode node in navList)
         {
-            if (node.position.x == newNode.position.x + 1) { newNode.right = node; }
-            if (node.position.x == newNode.position.x - 1) { newNode.left = node; }
-            if (node.position.y == newNode.position.y + 1) { newNode.up = node; }
-            if (node.position.y == newNode.position.y - 1) { newNode.down = node; }
+            if (node.position.x == newNode.position.x + 1) { newNode.right = node; return; }
+            if (node.position.x == newNode.position.x - 1) { newNode.left = node; return; }
+            if (node.position.y == newNode.position.y + 1) { newNode.up = node; return; }
+            if (node.position.y == newNode.position.y - 1) { newNode.down = node; return; }
+        }
+    }
+
+    public bool isOnGrid(NavigationGridNode target)
+    {
+        foreach(NavigationGridNode node in navList)
+        {
+            if(node == target) {  return true; }
+        }
+        return false;
+    }
+
+    public NavigationGridNode findNode(Vector2Int pos)
+    {
+        foreach(NavigationGridNode node in navList)
+        {
+            if(node.position == pos)
+            {
+                return node;
+            }
+        }
+        Debug.Log("Nav grid does not have this position");
+        return null;
+    }
+}
+
+//unfinished
+public class NavigationRoute
+{
+    public NavigationGridNode start;
+    public NavigationRoute(ArrayList navList)
+    {
+        for(int i = 0; i < navList.Count; i++)
+        {
+            
         }
     }
 }

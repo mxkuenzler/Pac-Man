@@ -64,7 +64,7 @@ public class PacManScript : MonoBehaviour
             }
             else
             {
-                nav.tryMovingTurn(ref direction, queuedDirection, transform.position, previousPos);
+                nav.tryMovingTurn(ref direction, queuedDirection, transform.position, previousPos, gameObject);
             }
         }
 

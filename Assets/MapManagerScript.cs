@@ -22,7 +22,12 @@ public class MapManagerScript : MonoBehaviour
     [SerializeField]
     private GameObject camera;
 
+    [SerializeField]
+    private GameObject pellet;
+
     public HashSet<Vector2Int> map;
+
+    private ArrayList pellets = new ArrayList();
 
     private void Start()
     {
@@ -67,10 +72,15 @@ public class MapManagerScript : MonoBehaviour
     public void generateMap()
     {
         clear();
+        Quaternion q = new Quaternion();
         //map = ProceduralGenerator.generateBoxPerimiterPath(numberOfBoxes, maxBoxSize);
         map = ProceduralGenerator.generateLineCastPath(numberOfBoxes, maxBoxSize);
+        foreach(Vector2Int pos in map)
+        {
+            pellets.Add(Instantiate(pellet, new Vector3(pos.x, pos.y), q));
+        }
         paintFloorTiles(map);
-        reframeCamera();
+        //reframeCamera();
 
     }
 

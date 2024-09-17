@@ -118,4 +118,41 @@ public static class Directions
                 return up();
         }
     }
+
+    //returns the cardinal directions sorted in order of their closeness to vec
+    public static Vector2Int[] nearestDirection(Vector2Int vec)
+    {
+        Vector2Int[] dirs = {right(), up(), left(), down() };
+        float[] angles = new float [4];
+
+        for (int i = 0; i < dirs.Length; i++) {
+            angles[i] = MathF.Abs( MathF.Acos(dotProduct(dirs[i], vec) / vec.magnitude));
+        }
+
+        for(int i = 0; i < dirs.Length - 1; i++ )
+        {
+            for (int j = 0; j < dirs.Length - 1; j++)
+            {
+                if (angles[j] > angles[j + 1])
+                {
+                    float temp = angles[j];
+                    angles[j] = angles[j + 1];
+                    angles[j + 1] = temp;
+
+                    Vector2Int tempVec = dirs[j];
+                    dirs[j] = dirs[j + 1];
+                    dirs[j + 1] = tempVec;
+                }
+            }
+        }
+        //Debug.Log(dirs[0] + " " + dirs[1]);
+        return dirs;
+    }
+
+   // public static float angleBetw
+
+    public static int dotProduct(Vector2Int vec1, Vector2Int vec2)
+    {
+        return vec1.x*vec2.x + vec1.y*vec2.y;
+    }
 }
