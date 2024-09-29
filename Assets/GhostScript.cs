@@ -1,9 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
+
+
+/*
+ * Possible Ghost Ideas:
+ * 
+ * - knower : moves slow but can always see you
+ * - sensor : moves fast but can only see you in certain areas
+ *    - hunter : LoS
+ *    - lurker : Web / Slime trail
+ * - line dash : fast in a straight line but has a turn cooldown cooldown
+ * - twins : try to get on either side of you
+ *    - move faster when close?
+ * - spectre : moves through walls
+ *    - can't see through paths?
+ * - scouter : sends out scouts to find you, then becomes a knower
+ *    - y/n moves while scouting?
+ *    - way to lose scouts
+ * 
+ * 
+ * 
+ */
 
 public class GhostScript : MonoBehaviour
 {
@@ -46,13 +68,14 @@ public class GhostScript : MonoBehaviour
 
         previousPos = transform.position;
 
+        
         turnTimer += Time.deltaTime;
         if (turnTimer >= timerCap)
         {
-            turnQueue.Enqueue(v3toNearestV2Int(pacMan.transform.position));
+            findRoute();
             turnTimer = 0;
         }
-
+        
         
         if (nav.isValidPath(v3toNearestV2Int(transform.position + nav.directions[direction] / 2)))
         {
@@ -73,6 +96,10 @@ public class GhostScript : MonoBehaviour
                     turnQueue.Dequeue();
                 }
                 directFollow(turnQueue.Peek());
+            }
+            else
+            {
+                following = true;
             }
         }
 
@@ -166,6 +193,43 @@ public class GhostScript : MonoBehaviour
                 return;
             }
         }
+    }
+
+    //minor bug: gets stuck on double shell. should be fine though. Small issue that resolves itself when the player moves
+    //
+    [ContextMenu("build route")]
+    private void findRoute()
+    {
+        Queue<Vector2Int> tempQueue = new();
+        Vector2Int pos = v3toNearestV2Int(transform.position);
+        Vector2Int target = v3toNearestV2Int(pacMan.transform.position);
+        Vector2Int[] moves;
+        tempQueue.Enqueue(pos);
+
+        while (pos != target)
+        {
+            moves = Directions.nearestDirection(target - pos);
+
+            int c = tempQueue.Count;
+
+            foreach (Vector2Int move in moves)
+            {
+                if (manager.map.Contains(pos + move) && !tempQueue.Contains(pos + move))
+                {
+                    pos += move;
+                    tempQueue.Enqueue(pos);
+                    break;
+                }
+            }
+
+            if(tempQueue.Count == c) { break; }
+        }
+
+        if (turnQueue.Count == 0 || (tempQueue.Count() < turnQueue.Count() && tempQueue.Peek() != turnQueue.Peek()))
+        {
+            turnQueue = tempQueue;
+        }
+        following = false;
     }
 
     private void sendAgent()

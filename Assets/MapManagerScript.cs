@@ -17,7 +17,7 @@ public class MapManagerScript : MonoBehaviour
     private TileBase[] tiles = new TileBase[16];
 
     [SerializeField]
-    private int numberOfBoxes, maxBoxSize;
+    private int numberOfBoxes, maxBoxSize, numberOfTrails;
 
     [SerializeField]
     private GameObject camera;
@@ -74,7 +74,8 @@ public class MapManagerScript : MonoBehaviour
         clear();
         Quaternion q = new Quaternion();
         //map = ProceduralGenerator.generateBoxPerimiterPath(numberOfBoxes, maxBoxSize);
-        map = ProceduralGenerator.generateLineCastPath(numberOfBoxes, maxBoxSize);
+        //map = ProceduralGenerator.generateLineCastPath(numberOfBoxes, maxBoxSize);
+        map = ProceduralGenerator.GenerateConnectedBoxes(numberOfBoxes, maxBoxSize, numberOfTrails);
         foreach(Vector2Int pos in map)
         {
             pellets.Add(Instantiate(pellet, new Vector3(pos.x, pos.y), q));

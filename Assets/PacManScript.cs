@@ -70,88 +70,17 @@ public class PacManScript : MonoBehaviour
 
 
     }
-    /*
-    void tryStillTurn()
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (directions[direction].x != 0)
-        {
-            Vector2Int newVec = new Vector2Int((int)previousPos.x, (int)previousPos.y)
-                                + new Vector2Int((int)directions[queuedDirection].x, (int)directions[queuedDirection].y);
-
-            if (isValidPath(newVec))
-            {
-                direction = queuedDirection;
-            }
-            
-        }
-        else
-        {
-            Vector2Int newVec = new Vector2Int((int)previousPos.x, (int)previousPos.y)
-                                    + new Vector2Int((int)directions[queuedDirection].x, (int)directions[queuedDirection].y);
-
-            if (isValidPath(newVec))
-            {
-                direction = queuedDirection;
-            }
-            
-        }
+        Debug.Log("pac nom");
     }
 
-    void tryMovingTurn()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (directions[direction].x != 0)
-        {
-            int currentSign = transform.position.x > 0 ? 1 : -1;
-            int prevSign = previousPos.x > 0 ? 1 : -1;
-            int current = (int)(transform.position.x);
-            int prev = (int)(previousPos.x);
-            if (current != prev || currentSign != prevSign)
-            {
-                Vector2Int newVec = new Vector2Int((Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev), (int)transform.position.y) 
-                                    + new Vector2Int((int)directions[queuedDirection].x, (int)directions[queuedDirection].y);
-
-                if (isValidPath(newVec))
-                {
-                    transform.position = new Vector3((Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev), transform.position.y);
-                    direction = queuedDirection;
-                }
-            }
-        }
-        else
-        {
-            int currentSign = transform.position.y > 0 ? 1 : -1;
-            int prevSign = previousPos.y > 0 ? 1 : -1;
-            int current = (int)(transform.position.y);
-            int prev = (int)(previousPos.y);
-            if (current != prev || currentSign != prevSign)
-            {
-                Vector2Int newVec = new Vector2Int((int)transform.position.x, (Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev)) 
-                                     + new Vector2Int((int)directions[queuedDirection].x, (int)directions[queuedDirection].y);
-
-                if ( isValidPath(newVec))
-                {
-                    transform.position = new Vector3(transform.position.x, (Mathf.Abs(current) > Mathf.Abs(prev) ? current : prev));
-                    direction = queuedDirection;
-                }
-            }
-        }
+        Debug.Log("pac bom");
     }
 
-    bool isValidPath(Vector2Int intendedMove)
-    {
-        //Debug.Log("Intent; " + intendedMove + " " + queuedDirection);
-        IEnumerable<Vector2Int> map = manager.map;
-        foreach (Vector2Int v in map)
-        {
-            if(intendedMove == v)
-            {
-                //Debug.Log("Valid");
-                return true;
-            }
-        }
-        return false;
-    }
-    */
     bool movingOut()
     {
         if (nav.directions[direction].x * transform.position.x < 0 || nav.directions[direction].y * transform.position.y < 0)
