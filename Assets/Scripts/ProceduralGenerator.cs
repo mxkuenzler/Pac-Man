@@ -25,7 +25,6 @@ public static class ProceduralGenerator
     
     static HashSet<Vector2Int> perimiter(Vector2Int center, int size)
     {
-        int length = (size - 1) * 8;
         HashSet<Vector2Int> retArr = new();
 
         for( int x = -size; x <= size; x++)
@@ -33,6 +32,24 @@ public static class ProceduralGenerator
             for (int y = -size; y <= size; y++)
             {
                 if(Math.Abs(x) == size || Math.Abs(y) == size)
+                {
+                    retArr.Add(center + new Vector2Int(x, y));
+                }
+            }
+        }
+
+        return retArr;
+    }
+
+    static HashSet<Vector2Int> perimiter(Vector2Int center, int width, int height)
+    {
+        HashSet<Vector2Int> retArr = new();
+
+        for (int x = -width; x <= width; x++)
+        {
+            for (int y = -height; y <= height; y++)
+            {
+                if (Math.Abs(x) == width || Math.Abs(y) == height)
                 {
                     retArr.Add(center + new Vector2Int(x, y));
                 }
@@ -69,7 +86,6 @@ public static class ProceduralGenerator
     //use bigger maxSize numbers for better results
     public static HashSet<Vector2Int> GenerateConnectedBoxes(int numberOfBoxes, int maxSize, int numberOfTrails)
     {
-        Debug.Log("Generating...");
         HashSet<Vector2Int> positions = new();
         //adds the boxes
         for (int i = 0; i < numberOfBoxes; i++)
@@ -82,7 +98,6 @@ public static class ProceduralGenerator
             positions.UnionWith(perimiter(point, size));
         }
 
-        Debug.Log("Trails");
         //adds trails within and between boxes
         int fails = 0;
         for (int i = 0; i < numberOfTrails && fails < 20; i++)
@@ -93,10 +108,8 @@ public static class ProceduralGenerator
             //find the closest tiles along primary axes, at least 2
             if (!positions.Contains(point) && IsSpaced(positions, point))
             {
-                Debug.Log(point);
                 if (!NearestPaths(point, positions, maxSize * 4))
                 {
-                    Debug.Log("Nah");
                     --i;
                 }
             }

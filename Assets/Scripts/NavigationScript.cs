@@ -13,7 +13,6 @@ public class NavigationScript : MonoBehaviour
     private void Start()
     {
 
-        manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<MapManagerScript>();
     }
 
     public void tryStillTurn(ref int direction, int queuedDirection, Vector3 pos)
