@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManagerScript : MonoBehaviour
 {
     private GameObject pacMan;
+    public bool gameActive = false;
 
     [SerializeField]
     private GameObject[] ghosts = new GameObject[3];
@@ -26,6 +27,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void GameOver()
     {
+        gameActive = false;
         pacMan.GetComponent<PacManScript>().movespeed = 0;
         foreach (GameObject g in activeGhosts)
         {
@@ -36,7 +38,7 @@ public class GameManagerScript : MonoBehaviour
 
     public IEnumerator StartGame()
     {
-
+        gameActive = true;
         foreach (GameObject g in activeGhosts)
         {
             Destroy(g);

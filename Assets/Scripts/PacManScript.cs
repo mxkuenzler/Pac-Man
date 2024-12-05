@@ -11,12 +11,16 @@ public class PacManScript : MonoBehaviour
     public MapManagerScript manager;
     public NavigationScript nav;
     public GameManagerScript gameManager;
+    public bool immune = false;
 
     int queuedDirection;
     int direction;
     Vector3 previousPos;
     int[] rotations = { 0, 90, 180, 270 };
 
+    [SerializeField]
+    private float dashCooldownTCap = 0.5f;
+    private float dashCooldown = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -40,12 +44,14 @@ public class PacManScript : MonoBehaviour
         {
             transform.position = v2IntToV3(v3toNearestV2Int(transform.position));
         }
-        if (Mathf.Abs(transform.position.x) % 1 < offsetAllowance && Mathf.Abs(transform.position.y) % 1 < offsetAllowance)
+
+        if (gameManager.gameActive)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) { queuedDirection = 0; }
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) { queuedDirection = 1; }
-            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) { queuedDirection = 2; }
-            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) { queuedDirection = 3; }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) { queuedDirection = 1; }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) { queuedDirection = 2; }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) { queuedDirection = 3; }
+            if (Input.GetKeyDown(KeyCode.Space) && dashCooldown == 0) { Dash(); }
         }
 
         if (direction == queuedDirection + 2 || direction == queuedDirection - 2)
@@ -64,12 +70,20 @@ public class PacManScript : MonoBehaviour
             }
         }
 
-
+        //update timers
+        if (dashCooldown > 0)
+        {
+            dashCooldown -= Time.deltaTime;
+        }
+        else
+        {
+            dashCooldown = 0;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Ghost")
+        if (collision.gameObject.tag == "Ghost" && !immune)
         {
             Debug.Log("Collided");
             gameManager.GameOver();
@@ -90,5 +104,22 @@ public class PacManScript : MonoBehaviour
     public void Reset()
     {
         movespeed = 4;
+    }
+
+    public void Dash()
+    {
+        immune = true;
+
+        StartCoroutine(DashTimer(0.1f));
+
+        dashCooldown = dashCooldownTCap;
+        movespeed = 20;
+    }
+
+    public IEnumerator DashTimer(float time)
+    {
+        yield return new WaitForSeconds(time);
+        movespeed = 4;
+        immune = false;
     }
 }
