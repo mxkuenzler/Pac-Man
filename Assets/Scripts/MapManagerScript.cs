@@ -43,10 +43,10 @@ public class MapManagerScript : MonoBehaviour
 
     private void Update()
     {
-        if(pellets.Count == 0)
+        /*if(pellets.Count == 0)
         {
             generateMap();
-        }
+        }*/
     }
 
     public void removePellet(GameObject pel)
@@ -132,13 +132,11 @@ public class MapManagerScript : MonoBehaviour
         //map = ProceduralGenerator.generateBoxPerimiterPath(numberOfBoxes, maxBoxSize);
         //map = ProceduralGenerator.generateLineCastPath(numberOfBoxes, maxBoxSize);
         map = ProceduralGenerator.GenerateConnectedBoxes(numberOfBoxes, maxBoxSize, numberOfTrails);
-        foreach(Vector2Int pos in map)
+        /*foreach(Vector2Int pos in map)
         {
             pellets.Add(Instantiate(pellet, new Vector3(pos.x, pos.y), q));
-        }
+        }*/
         newpaintFloorTiles(map);
-
-        StartCoroutine(gameManager.StartGame());
         //reframeCamera();
 
     }
@@ -175,6 +173,10 @@ public class MapManagerScript : MonoBehaviour
     public void clear()
     {
         floorMap.ClearAllTiles();
+        foreach(GameObject pellet in pellets)
+        {
+            Destroy(pellet);
+        }
         pellets.Clear();
     }
 }

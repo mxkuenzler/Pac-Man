@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -8,15 +9,16 @@ public class GameManagerScript : MonoBehaviour
     public bool gameActive = false;
 
     [SerializeField]
+    private MapManagerScript mapManager;
+    [SerializeField]
     private GameObject[] ghosts = new GameObject[3];
     private List<GameObject> activeGhosts = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Game Manager Start");
         pacMan = GameObject.FindGameObjectWithTag("Player");
-        Debug.Log(pacMan);
+        StartGame();
     }
 
     // Update is called once per frame
@@ -33,11 +35,12 @@ public class GameManagerScript : MonoBehaviour
         {
             g.GetComponent<GhostScript>().movespeed = 0;
         }
-        Debug.Log("Game Over");
     }
 
-    public IEnumerator StartGame()
+    public void StartGame()
     {
+        mapManager.generateMap();
+
         gameActive = true;
         foreach (GameObject g in activeGhosts)
         {
@@ -50,11 +53,15 @@ public class GameManagerScript : MonoBehaviour
         //pacMan.transform.position = Vector3.zero;
         pacMan.transform.position = Vector3.zero;
 
-        yield return new WaitForSeconds(1);
+        populateGhosts();
+    }
 
+    public void populateGhosts()
+    {
         foreach (GameObject g in ghosts)
         {
-            activeGhosts.Add(Instantiate(g, Vector3.zero, Quaternion.identity));
+            var q = mapManager.map.ElementAt(Random.Range(0, mapManager.map.Count));
+            activeGhosts.Add(Instantiate(g, VectorConverter.v2IntToV3(q), Quaternion.identity));
             try { g.GetComponent<GhostScript>().Reset(); }
             catch { }
         }

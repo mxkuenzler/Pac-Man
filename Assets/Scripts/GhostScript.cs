@@ -49,6 +49,9 @@ public class GhostScript : MonoBehaviour
     public Queue<Vector2Int> turnQueue;
 
     [SerializeField]
+    protected float turnChance = 0.5f;
+
+    [SerializeField]
     public float timerCap = 1;
     protected float timer = 0;
 
@@ -224,5 +227,13 @@ public class GhostScript : MonoBehaviour
 
     public virtual void Reset()
     {
+    }
+
+    protected virtual void wander()
+    {
+        if (Random.value < turnChance ||!nav.isValidPath(v3toNearestV2Int(transform.position + nav.directions[queuedDirection])))
+        {
+            queuedDirection = Random.Range(0, 4);
+        }
     }
 }

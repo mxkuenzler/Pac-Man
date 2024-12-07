@@ -314,3 +314,18 @@ public static class Directions
         return vec1.x*vec2.x + vec1.y*vec2.y;
     }
 }
+
+public static class VectorConverter
+{
+    public static Vector2Int v3toNearestV2Int(Vector3 vec)
+    {
+        var retVec = new Vector2Int((int)(vec.x + (vec.x >= 0 ? 0.5 : -0.5)), (int)(vec.y + (vec.y >= 0 ? 0.5 : -0.5)));
+
+        return retVec;
+    }
+
+    public static Vector3 v2IntToV3(Vector2Int vec)
+    {
+        return new Vector3(vec.x, vec.y);
+    }
+}

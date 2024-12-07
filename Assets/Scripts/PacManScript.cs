@@ -21,12 +21,17 @@ public class PacManScript : MonoBehaviour
     [SerializeField]
     private float dashCooldownTCap = 0.5f;
     private float dashCooldown = 0;
+    [SerializeField]
+    private int dashDistane = 3;
+
+    [SerializeField]
+    private float doubleTapTimerCap = 0.3f;
+    private float[] timers = { 0, 0, 0, 0 };
 
     // Start is called before the first frame update
     void Start()
     {
         previousPos = transform.position;
-
     }
 
     // Update is called once per frame
@@ -47,11 +52,51 @@ public class PacManScript : MonoBehaviour
 
         if (gameManager.gameActive)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) { queuedDirection = 0; }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) { queuedDirection = 1; }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) { queuedDirection = 2; }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) { queuedDirection = 3; }
-            if (Input.GetKeyDown(KeyCode.Space) && dashCooldown == 0) { Dash(); }
+            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) {
+                queuedDirection = 0;
+                if (timers[0] > 0)
+                {
+                    Dash(0);
+                }
+                else
+                {
+                    timers[0] = doubleTapTimerCap;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) {
+                queuedDirection = 1;
+                if (timers[1] > 0)
+                {
+                    Dash(1);
+                }
+                else
+                {
+                    timers[1] = doubleTapTimerCap;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) {
+                queuedDirection = 2;
+                if (timers[2] > 0)
+                {
+                    Dash(2);
+                }
+                else
+                {
+                    timers[2] = doubleTapTimerCap;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) {
+                queuedDirection = 3;
+                if (timers[3] > 0)
+                {
+                    Dash(3);
+                }
+                else
+                {
+                    timers[3] = doubleTapTimerCap;
+                }
+            }
+            //if (Input.GetKeyDown(KeyCode.Space) && dashCooldown == 0) { Dash(); }
         }
 
         if (direction == queuedDirection + 2 || direction == queuedDirection - 2)
@@ -71,13 +116,25 @@ public class PacManScript : MonoBehaviour
         }
 
         //update timers
-        if (dashCooldown > 0)
+        if(dashCooldown > 0)
         {
             dashCooldown -= Time.deltaTime;
         }
         else
         {
             dashCooldown = 0;
+        }
+
+        for (int i = 0; i < timers.Length; i++)
+        {
+            if (timers[i] > 0)
+            {
+                timers[i] -= Time.deltaTime;
+            }
+            else
+            {
+                timers[i] = 0;
+            }
         }
     }
 
@@ -106,14 +163,23 @@ public class PacManScript : MonoBehaviour
         movespeed = 4;
     }
 
-    public void Dash()
+    public void Dash(int direction)
     {
-        immune = true;
+        int hop = dashDistane;
+        while (hop > 0)
+        {
+            if (nav.isValidPath(v3toNearestV2Int(transform.position + nav.directions[direction] * hop)))
+            {
 
-        StartCoroutine(DashTimer(0.1f));
+                dashCooldown = dashCooldownTCap;
 
-        dashCooldown = dashCooldownTCap;
-        movespeed = 20;
+                transform.position += nav.directions[direction] * hop;
+
+                break;
+            }
+            --hop;
+        }
+        //movespeed = 20;
     }
 
     public IEnumerator DashTimer(float time)

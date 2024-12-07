@@ -1,14 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //scenthound
 public class DifferentGhostScript : GhostScript
 {
     [SerializeField]
-    bool going = true;
+    bool tracking = false;
+
+    [SerializeField]
+    private int maxQueueSize = 20;
+
+
+    [SerializeField]
+    private GameObject queueMarker;
+    private List<Vector2Int> queueMarkers = new List<Vector2Int>();
+
     private Vector2Int backOfQueue;
+
     private void Update()
     {
         previousPos = transform.position;
@@ -19,27 +30,42 @@ public class DifferentGhostScript : GhostScript
         }
 
         buildScentTrail();
+        //showQueue();
 
-        
-        if (turnQueue.Count > 0 && going)
+        if (tracking)
         {
-            if (v3toNearestV2Int(transform.position) == turnQueue.Peek())
+            if (turnQueue.Count > 0)
             {
-                var here = turnQueue.Peek();
-                turnQueue.Dequeue();
+                var here = v3toNearestV2Int(transform.position);
                 if (turnQueue.Contains(here))
                 {
-                    while (turnQueue.Contains(here)) { turnQueue.Dequeue(); }
                     turnQueue.Dequeue();
+                    if (turnQueue.Contains(here))
+                    {
+                        while (turnQueue.Contains(here)) { turnQueue.Dequeue(); }
+                    }
+                }
+                if((here - turnQueue.Peek()).magnitude > 1.2)
+                {
+                    tracking = false;
+                }
+                else
+                {
+                    directFollow(turnQueue.Peek());
                 }
             }
-            directFollow(turnQueue.Peek());
         }
         else
         {
-            Debug.Log("no queue");
+            if (turnQueue.Contains(v3toNearestV2Int(transform.position)))
+            {
+                tracking = true;
+            }
+            else
+            {
+                wander();
+            }
         }
-        
 
         if (direction == queuedDirection + 2 || direction == queuedDirection - 2)
         {
@@ -71,5 +97,16 @@ public class DifferentGhostScript : GhostScript
     public override void Reset()
     {
         turnQueue.Clear();
+    }
+
+    public void showQueue()
+    {
+        foreach(Vector2Int q in turnQueue)
+        {
+            if (!queueMarkers.Contains(q)) {
+                queueMarkers.Add(q);
+                Instantiate(queueMarker, v2IntToV3(q), Quaternion.identity);
+            }
+        }
     }
 }

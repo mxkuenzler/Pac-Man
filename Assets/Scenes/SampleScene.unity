@@ -648,6 +648,10 @@ MonoBehaviour:
   manager: {fileID: 604872380}
   nav: {fileID: 403419552}
   gameManager: {fileID: 2101738639}
+  immune: 0
+  dashCooldownTCap: 0.5
+  dashDistane: 3
+  doubleTapTimerCap: 0.3
 --- !u!212 &1106216513
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -860,9 +864,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 604872380}
-        m_TargetAssemblyTypeName: MapManagerScript, Assembly-CSharp
-        m_MethodName: generateMap
+      - m_Target: {fileID: 2101738639}
+        m_TargetAssemblyTypeName: GameManagerScript, Assembly-CSharp
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1161,6 +1165,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858a278c86d0dd640a2529c04215d0ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameActive: 0
+  mapManager: {fileID: 604872380}
   ghosts:
   - {fileID: 1389142782835287020, guid: 8d8d84cb6b9e1774ab5fc201d058797a, type: 3}
   - {fileID: 6419697750896847153, guid: 21b0f9e1540b07346999990c93eee7f3, type: 3}

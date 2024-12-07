@@ -101,7 +101,10 @@ MonoBehaviour:
   movespeed: 4
   following: 0
   timerCap: 1
-  going: 1
+  tracking: 0
+  maxQueueSize: 20
+  turnChance: 0.01
+  queueMarker: {fileID: 1886917634677658273, guid: 0bd999f0e7c3e7a459f3f135684fbdf1, type: 3}
 --- !u!70 &2310735018356588246
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
